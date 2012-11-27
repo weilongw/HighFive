@@ -1,0 +1,13 @@
+<resources>
+
+    <string name="app_name">HighFive</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="welcome">Welcome to doodle world</string>
+    <string name="doodle">Doodle</string>
+    <string name="shake">Shake</string>
+    <string name="title_activity_doodle">DoodleActivity</string>
+    <string name="title_activity_shake">ShakeActivity</string>
+
+</resources>

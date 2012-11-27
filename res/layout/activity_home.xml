@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <Chronometer
+        android:id="@+id/chronometer"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="32sp" />
+
+    <ImageView
+        android:id="@+id/imageView_chronometerBackground"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="44dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/paint_brush" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageView_chronometerBackground"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="@string/welcome"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/LaunchDoodleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/imageView_chronometerBackground"
+        android:layout_marginLeft="63dp"
+        android:text="@string/doodle" />
+
+    <Button
+        android:id="@+id/LaunchShakeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/imageView_chronometerBackground"
+        android:layout_marginRight="59dp"
+        android:text="@string/shake" />
+
+</RelativeLayout>
