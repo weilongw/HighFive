@@ -9,5 +9,10 @@
     <string name="shake">Shake</string>
     <string name="title_activity_doodle">DoodleActivity</string>
     <string name="title_activity_shake">ShakeActivity</string>
+    <string name="title_activity_multi_chooser">MultiChooserActivity</string>
+    <string name="multi_app_name">MultiImageChooser</string>
+    <string name="free_version_label">Free version - Images left: %d</string>
+    <string name="error_database">There was an error opening the images database. Please report the problem.</string>
+    <string name="requesting_thumbnails">Requesting thumbnails, please be patient</string>
 
 </resources>

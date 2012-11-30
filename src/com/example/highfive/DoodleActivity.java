@@ -1,18 +1,36 @@
 package com.example.highfive;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class DoodleActivity extends Activity {
 
+	private TextView textView;
+	private ImageView doodleImageView;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doodle);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        
+        Intent intent = getIntent();
+        String doodleImageUri = intent.getStringExtra(HomeActivity.HOME_TO_DOODLE);
+       
+        doodleImageView = (ImageView)findViewById(R.id.doodleImageView);
+        Bitmap bitmap = BitmapFactory.decodeFile(doodleImageUri);
+        doodleImageView.setImageBitmap(bitmap);
+        //textView.setText(doodleImageUri);
+        
+        
+        
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -25,9 +43,9 @@ public class DoodleActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+          /*  case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
-                return true;
+                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
