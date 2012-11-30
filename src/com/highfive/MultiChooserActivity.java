@@ -1,4 +1,4 @@
-package com.example.highfive;
+package com.highfive;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.highfive.R;
 
 import android.content.Context;
 import android.content.Intent;

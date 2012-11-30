@@ -1,6 +1,8 @@
-package com.example.highfive;
+package com.highfive;
 
 import java.util.ArrayList;
+
+import com.highfive.R;
 
 import android.app.Activity;
 import android.content.Intent;

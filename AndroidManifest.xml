@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.highfive"
+    package="com.highfive"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -25,21 +25,21 @@
             android:label="@string/title_activity_doodle" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.highfive.HomeActivity" />
+                android:value="com.highfive.HomeActivity" />
         </activity>
         <activity
             android:name=".MultiChooserActivity"
             android:label="@string/title_activity_multi_chooser" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.highfive.HomeActivity" />
+                android:value="com.highfive.HomeActivity" />
         </activity>
         <activity
             android:name=".ShakeActivity"
             android:label="@string/title_activity_shake" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.highfive.HomeActivity" />
+                android:value="com.highfive.HomeActivity" />
         </activity>
     </application>
 

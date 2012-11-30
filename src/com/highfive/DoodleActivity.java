@@ -1,31 +1,31 @@
-package com.example.highfive;
+package com.highfive;
+
+import com.highfive.R;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+
 
 public class DoodleActivity extends Activity {
-
-	private TextView textView;
-	private ImageView doodleImageView;
+	
+	public static String doodleImageUri;
+	
+	private DoodleView doodleView;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_doodle);
-        
         Intent intent = getIntent();
-        String doodleImageUri = intent.getStringExtra(HomeActivity.HOME_TO_DOODLE);
+        doodleImageUri = intent.getStringExtra(HomeActivity.HOME_TO_DOODLE);
+        setContentView(R.layout.activity_doodle);
        
-        doodleImageView = (ImageView)findViewById(R.id.doodleImageView);
-        Bitmap bitmap = BitmapFactory.decodeFile(doodleImageUri);
-        doodleImageView.setImageBitmap(bitmap);
+        doodleView = (DoodleView)findViewById(R.id.doodleView);
+        //Bitmap bitmap = BitmapFactory.decodeFile(doodleImageUri);
+        //doodleImageView.setImageBitmap(bitmap);
         //textView.setText(doodleImageUri);
         
         

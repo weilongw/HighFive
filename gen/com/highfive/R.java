@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.example.highfive;
+package com.highfive;
 
 public final class R {
     public static final class attr {
@@ -21,7 +21,7 @@ public final class R {
         public static final int LaunchShakeButton=0x7f070005;
         public static final int btn_select=0x7f070008;
         public static final int chronometer=0x7f070001;
-        public static final int doodleImageView=0x7f070000;
+        public static final int doodleView=0x7f070000;
         public static final int gridview=0x7f070007;
         public static final int imageView_chronometerBackground=0x7f070002;
         public static final int label_images_left=0x7f070006;
@@ -48,6 +48,8 @@ public final class R {
         public static final int free_version_label=0x7f04000b;
         public static final int hello_world=0x7f040001;
         public static final int menu_settings=0x7f040002;
+        public static final int message_error_saving=0x7f04000f;
+        public static final int message_saved=0x7f04000e;
         public static final int multi_app_name=0x7f04000a;
         public static final int requesting_thumbnails=0x7f04000d;
         public static final int shake=0x7f040006;
