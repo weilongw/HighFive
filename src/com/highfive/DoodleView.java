@@ -14,6 +14,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore.Images;
@@ -44,16 +46,22 @@ public class DoodleView extends View {
     	//set the initial display settings for the painted line
     	paintLine = new Paint();
     	paintLine.setAntiAlias(true); // smooth edges of drawn line
-    	paintLine.setColor(Color.BLACK); // default color is black
+    	paintLine.setColor(Color.RED); // default color is black
     	paintLine.setStyle(Paint.Style.STROKE); // solid line
     	paintLine.setStrokeWidth(5); // set the default line width
     	paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
     	pathMap = new HashMap<Integer, Path>();
     	previousPointMap = new HashMap<Integer, Point>();
-    	
+    	//setPadding(100,100,100,100);
     	imageBitmap = BitmapFactory.decodeFile(DoodleActivity.doodleImageUri);
+    	//Bitmap empty = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(),Bitmap.Config.ARGB_8888);
+    	//Canvas canvas = new Canvas(empty);
+    	//canvas.drawBitmap(imageBitmap, new Matrix(), null);
     	BitmapDrawable backBitmap = new BitmapDrawable(imageBitmap);
+    	//backBitmap.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+    	//System.out.println(backBitmap.getWidth()+ " : " + backBitmap.getHeight());
     	setBackgroundDrawable(backBitmap);
+    	
     	
         //doodleImageView.setImageBitmap(bitmap);
     } // end DoodleView constructor
@@ -64,6 +72,11 @@ public class DoodleView extends View {
     	bitmap = Bitmap.createBitmap(getWidth(), getHeight(), 
     			Bitmap.Config.ARGB_8888);
     	bitmapCanvas = new Canvas(bitmap);
+    	
+    	//RelativeLayout layout = (RelativeLayout)findViewById(R.id.doodleLayout);
+        //System.out.println(doodleView.getWidth() + ":" + doodleView.getHeight());
+        
+        //layout.setPadding(100, 100, 100, 100);
     	//bitmap.eraseColor(Color.WHITE); // erase the BitMap with white
     } // end method onSizeChanged
    
@@ -74,7 +87,12 @@ public class DoodleView extends View {
     	bitmap.eraseColor(Color.TRANSPARENT); // clear the bitmap 
     	invalidate(); // refresh the screen
     } // end method clear
-   
+    public Paint getPaint() {
+    	return paintLine;
+    }
+    public void setErase() {
+    	paintLine.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+    }
     // set the painted line's color
     public void setDrawingColor(int color) {
     	paintLine.setColor(color);
@@ -120,13 +138,16 @@ public class DoodleView extends View {
 			   action == MotionEvent.ACTION_POINTER_DOWN) {
 		   touchStarted(event.getX(actionIndex), event.getY(actionIndex), 
 				   event.getPointerId(actionIndex));
+		   invalidate();
 	   } // end if
 	   else if (action == MotionEvent.ACTION_UP ||
          action == MotionEvent.ACTION_POINTER_UP) {
 		   touchEnded(event.getPointerId(actionIndex));
+		   invalidate();
 	   } // end else if
 	   else {
-		   touchMoved(event); 
+		   touchMoved(event);
+		   invalidate();
 	   } // end else
       
 	   invalidate(); // redraw
@@ -204,7 +225,7 @@ public class DoodleView extends View {
    	// save the current image to the Gallery
    	public void saveImage() {
    		// use "Doodlz" followed by current time as the image file name
-   		String fileName = "Doodlz" + System.currentTimeMillis();
+   		String fileName = "HighFive" + System.currentTimeMillis();
 
    		// create a ContentValues and configure new image's data
    		ContentValues values = new ContentValues();
@@ -217,8 +238,11 @@ public class DoodleView extends View {
    				Images.Media.EXTERNAL_CONTENT_URI, values);
 
    		
-   		Canvas canvas = new Canvas(imageBitmap);
-   		canvas.drawBitmap(bitmap, new Matrix(), null);
+   		//Bitmap result = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(), false);
+   		Bitmap result = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
+   		Canvas canvas = new Canvas(result);
+   		Bitmap scaled = Bitmap.createScaledBitmap(bitmap, result.getWidth(), result.getHeight(), false);
+   		canvas.drawBitmap(scaled, new Matrix(), null);
 
    		try {
    			// get an OutputStream to uri
@@ -226,7 +250,7 @@ public class DoodleView extends View {
    					getContext().getContentResolver().openOutputStream(uri);
 
    			// copy the bitmap to the OutputStream
-   			imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+   			result.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
 
    			// flush and close the OutputStream
    			outStream.flush(); // empty the buffer

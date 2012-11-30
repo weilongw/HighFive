@@ -16,5 +16,10 @@
     <string name="requesting_thumbnails">Requesting thumbnails, please be patient</string>
     <string name="message_saved">Your image has been saved to the gallery</string>
     <string name="message_error_saving">Error happens!</string>
+    <string name="button_set_line_width">Set Line Width</string>
+    <string name="pencil_button_text">Pencil</string>
+    <string name="emboss_button_text">Emboss</string>
+    <string name="blur_button_text">Blur</string>
+    <string name="src_button_text">SrcATop</string>
 
 </resources>
