@@ -23,21 +23,22 @@ public final class R {
         public static final int blurButton=0x7f07000e;
         public static final int btn_select=0x7f070009;
         public static final int chronometer=0x7f070002;
+        public static final int doodleImageView=0x7f07000f;
         public static final int doodleLayout=0x7f070000;
         public static final int doodleView=0x7f070001;
         public static final int embossButton=0x7f07000d;
         public static final int gridview=0x7f070008;
         public static final int imageView_chronometerBackground=0x7f070003;
         public static final int label_images_left=0x7f070007;
-        public static final int menu_settings=0x7f070013;
+        public static final int menu_settings=0x7f070014;
         public static final int pencilButton=0x7f07000c;
         public static final int shakeTextView=0x7f07000a;
         public static final int tableLayout=0x7f07000b;
         public static final int textView1=0x7f070004;
-        public static final int widthDialogDoneButton=0x7f070012;
-        public static final int widthDialogLinearLayout=0x7f07000f;
-        public static final int widthImageView=0x7f070010;
-        public static final int widthSeekBar=0x7f070011;
+        public static final int widthDialogDoneButton=0x7f070013;
+        public static final int widthDialogLinearLayout=0x7f070010;
+        public static final int widthImageView=0x7f070011;
+        public static final int widthSeekBar=0x7f070012;
     }
     public static final class layout {
         public static final int activity_doodle=0x7f030000;
@@ -45,7 +46,8 @@ public final class R {
         public static final int activity_multi_chooser=0x7f030002;
         public static final int activity_shake=0x7f030003;
         public static final int brush_dialog=0x7f030004;
-        public static final int width_dialog=0x7f030005;
+        public static final int doodle=0x7f030005;
+        public static final int width_dialog=0x7f030006;
     }
     public static final class menu {
         public static final int activity_doodle=0x7f060000;

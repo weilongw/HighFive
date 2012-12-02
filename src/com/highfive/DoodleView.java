@@ -52,24 +52,27 @@ public class DoodleView extends View {
     	paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
     	pathMap = new HashMap<Integer, Path>();
     	previousPointMap = new HashMap<Integer, Point>();
-    	//setPadding(100,100,100,100);
-    	imageBitmap = BitmapFactory.decodeFile(DoodleActivity.doodleImageUri);
-    	//Bitmap empty = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(),Bitmap.Config.ARGB_8888);
-    	//Canvas canvas = new Canvas(empty);
-    	//canvas.drawBitmap(imageBitmap, new Matrix(), null);
-    	BitmapDrawable backBitmap = new BitmapDrawable(imageBitmap);
-    	//backBitmap.setTileModeXY(Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
-    	//System.out.println(backBitmap.getWidth()+ " : " + backBitmap.getHeight());
-    	setBackgroundDrawable(backBitmap);
     	
     	
-        //doodleImageView.setImageBitmap(bitmap);
+    	
+    	
+    	
+    	//BitmapDrawable backBitmap = new BitmapDrawable(imageBitmap);
+    	
+    	//setBackgroundDrawable(backBitmap);
+    	
+    	
+       
     } // end DoodleView constructor
 
     // Method onSizeChanged creates BitMap and Canvas after app displays
     @Override
     public void onSizeChanged(int w, int h, int oldW, int oldH) {
-    	bitmap = Bitmap.createBitmap(getWidth(), getHeight(), 
+    	
+    	imageBitmap = BitmapFactory.decodeFile(DoodleActivity.doodleImageUri);
+    	float scale = (float)imageBitmap.getHeight() / (float)imageBitmap.getWidth();
+        float imageHeight = scale * (getWidth());
+    	bitmap = Bitmap.createBitmap(getWidth(), (int)imageHeight, 
     			Bitmap.Config.ARGB_8888);
     	bitmapCanvas = new Canvas(bitmap);
     	

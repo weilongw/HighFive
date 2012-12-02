@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.graphics.EmbossMaskFilter;
 import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,16 +47,23 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         doodleImageUri = intent.getStringExtra(HomeActivity.HOME_TO_DOODLE);
         
         
-        setContentView(R.layout.activity_doodle);
+        setContentView(R.layout.doodle);
         doodleView = (DoodleView)findViewById(R.id.doodleView);
+        ImageView doodleImageView = (ImageView)findViewById(R.id.doodleImageView);
         
         //doodleView = new DoodleView(this);
         //
         //doodleView.setClipToPadding(true);
         
         //doodleView.setPadding(100, 100, 100, 100);
-        //Bitmap bitmap = BitmapFactory.decodeFile(doodleImageUri);
-        //doodleImageView.setImageBitmap(bitmap);
+        Bitmap bitmap = BitmapFactory.decodeFile(doodleImageUri);
+        Display display = getWindowManager().getDefaultDisplay(); 
+        int screenWidth = display.getWidth();
+        
+        float scale = (float)bitmap.getHeight() / (float)bitmap.getWidth();
+        float imageHeight = scale * screenWidth;
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, screenWidth, (int)imageHeight, false);
+        doodleImageView.setImageBitmap(scaled);
         //textView.setText(doodleImageUri);
         
         
