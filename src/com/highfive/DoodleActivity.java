@@ -64,8 +64,10 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.activity_doodle, menu);
     	super.onCreateOptionsMenu(menu);
+    	
+        //getMenuInflater().inflate(R.menu.activity_doodle, menu);
+    	
     	menu.add(0, COLOR_MENU_ID, 0, "Color");
     	menu.add(0, BRUSH_MENU_ID, 0, "Brush");
     	menu.add(0, WIDTH_MENU_ID, 0 ,"Line Width");
@@ -76,11 +78,7 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-    	super.onPrepareOptionsMenu(menu);
-    	return true;
-    }
+   
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

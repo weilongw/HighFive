@@ -15,6 +15,7 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
         public static final int loading_icon=0x7f020002;
         public static final int paint_brush=0x7f020003;
+        public static final int you=0x7f020004;
     }
     public static final class id {
         public static final int LaunchDoodleButton=0x7f070005;
