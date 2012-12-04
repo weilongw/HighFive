@@ -1,55 +1,120 @@
 package com.highfive;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore.Images;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-public class ShakeActivity extends Activity {
+public class ShakeActivity extends Activity implements ColorPickerDialog.OnColorChangedListener{
     
+	private static ArrayList<String> shakeImages;
+	private static final int BACKGROUND_MENU_ID = Menu.FIRST;
+	private static final int SAVE_MENU_ID = Menu.FIRST + 1;
+	private Draw drawView;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        ArrayList<String> shakeImages = intent.getStringArrayListExtra(HomeActivity.HOME_TO_SHAKE);
+        shakeImages = intent.getStringArrayListExtra(HomeActivity.HOME_TO_SHAKE);
+        int screenHeight = intent.getIntExtra("SCREEN_HEIGHT", 720);
         Bmp[] pic = new Bmp[shakeImages.size()];
+        
+        
+        int max_height = screenHeight / (pic.length + 1);
         for(int i = 0; i < pic.length; i++) {
         	Bitmap tmp = BitmapFactory.decodeFile(shakeImages.get(i));
-            pic[i] = new Bmp(Bitmap.createScaledBitmap(tmp, 400, 400, false), i, i * 50f, i * 60f);
+        	int width  = (int)((float)tmp.getWidth() / (float)tmp.getHeight() * (float)max_height);
+        	
+            pic[i] = new Bmp(Bitmap.createScaledBitmap(tmp, width, max_height, false), i, 0,0);
             pic[i].width = pic[i].getPic().getWidth();
-            pic[i].height = pic[i].getPic().getWidth();
+            pic[i].height = pic[i].getPic().getHeight();
+            System.out.println(pic[i].preX +":" +pic[i].preY +"<==>" + pic[i].width + ":" + pic[i].height);
         }
-        setContentView(new Draw(this, pic));
+        setContentView(drawView = new Draw(this, pic));
+        
+        
+        
     }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
+    	
+        //getMenuInflater().inflate(R.menu.activity_doodle, menu);
+    	
+    	menu.add(0, BACKGROUND_MENU_ID, 0, "Background");
+    	menu.add(0, SAVE_MENU_ID, 0, "Save");	
+        return true;
+    }
+    
+	@Override
+	public void colorChanged(int color) {
+		drawView.setColor(color);
+	}
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+ 
+        switch (item.getItemId()) {
+     
+        	case BACKGROUND_MENU_ID :
+        		new ColorPickerDialog(this, this, drawView.getColor()).show();
+        	
+        		return true;       	
+        	case SAVE_MENU_ID :
+        		drawView.saveImage();
+        		return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
     
     class Draw extends View {   
     	Bmp bmp[];
     	
         public Draw(Context context) {
         	super(context);
-        	bmp = new Bmp[4]; 
-        	for(int i = 0; i < 4; i++) {
-        		bmp[i] = new Bmp(Bitmap.createScaledBitmap(BitmapFactory.decodeStream(getResources().openRawResource(R.drawable.you)), 240, 240, false), i, i * 50f, i * 60f);
-        		bmp[i].width = bmp[i].getPic().getWidth();
-        		bmp[i].height = bmp[i].getPic().getWidth();
-        	}
-        	this.pic = bmp;   
+        	
         }
         
         public Draw(Context context, Bmp[] pic) {
         	super(context);
+        	
             this.pic = pic;
+        }
+        
+        public int getColor() { return color; }
+        public void setColor(int color) { 
+        	this.color = color;
+        	this.canvas.drawColor(color);
+        	for(int i = 0; i < pic.length; i++) {
+        		tempBitmap = pic[0].findByPiority(pic, i);
+                //tempBitmap.matrix.preTranslate(0f, 0f);
+                canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
+        	}
+        	invalidate(); 
         }
         
         @Override
@@ -57,7 +122,7 @@ public class ShakeActivity extends Activity {
         	canvasBitmap = Bitmap.createBitmap(getWidth(), getHeight(), 
         			Bitmap.Config.ARGB_8888);
         	canvas = new Canvas(canvasBitmap);
-        	this.canvas.drawColor(-232432445);
+        	this.canvas.drawColor(color);
             for(int i = 0; i < pic.length; i++) {
             	tempBitmap = pic[0].findByPiority(pic, i);
                 tempBitmap.matrix.preTranslate(tempBitmap.getXY(1) - tempBitmap.getWidth() / 2, tempBitmap.getXY(2) - tempBitmap.getHeight() / 2);
@@ -71,6 +136,7 @@ public class ShakeActivity extends Activity {
         @Override
         public void onDraw(Canvas canvas) {
         	super.onDraw(canvas);
+        
             canvas.drawBitmap(canvasBitmap, 0, 0, null);
         }
         
@@ -96,7 +162,7 @@ public class ShakeActivity extends Activity {
             if(event.getAction() == MotionEvent.ACTION_MOVE && BeginMove && event.getPointerCount() == 1) {
             	this.X = event.getX();
                 this.Y = event.getY();
-                this.canvas.drawColor(-232432445);
+                this.canvas.drawColor(color);
                 for(int i = 0; i < high; i++) {
                 	tempBitmap = pic[0].findByPiority(pic, i);
                     tempBitmap.matrix.preTranslate(0f, 0f);
@@ -138,7 +204,7 @@ public class ShakeActivity extends Activity {
             	tan = (Y_2 - Y_1) / (X_2 - X_1);
             	rotary = (float) Math.atan((double)tan);
             	
-            	this.canvas.drawColor(-232432445);
+            	this.canvas.drawColor(color);
             	
             	for(int i = 0; i < high; i++) {
             		tempBitmap = pic[0].findByPiority(pic, i);
@@ -274,7 +340,46 @@ public class ShakeActivity extends Activity {
         	re[1] = - a * matrixArray[3] + b * matrixArray[4] + Y;
         	return re;
         }
-        
+        public void saveImage() {
+        	String fileName = "HighFive" + System.currentTimeMillis();
+
+       		// create a ContentValues and configure new image's data
+       		ContentValues values = new ContentValues();
+       		values.put(Images.Media.TITLE, fileName);
+       		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
+       		values.put(Images.Media.MIME_TYPE, "image/jpg");
+
+       		// get a Uri for the location to save the file
+       		Uri uri = getContext().getContentResolver().insert(
+       				Images.Media.EXTERNAL_CONTENT_URI, values);
+       		try { 
+       			// get an OutputStream to uri
+       			OutputStream outStream = 
+       					getContext().getContentResolver().openOutputStream(uri);
+
+       			// copy the bitmap to the OutputStream
+       			canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+
+       			// flush and close the OutputStream
+       			outStream.flush(); // empty the buffer
+       			outStream.close(); // close the stream
+
+       			// display a message indicating that the image was saved
+       			Toast message = Toast.makeText(getContext(), 
+       					R.string.message_saved, Toast.LENGTH_SHORT);
+       			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
+       					message.getYOffset() / 2);
+       			message.show(); // display the Toast
+       		} // end try
+       		catch (IOException ex) {
+       			// display a message indicating that the image was saved
+       			Toast message = Toast.makeText(getContext(), 
+       					R.string.message_error_saving, Toast.LENGTH_SHORT);
+       			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
+       					message.getYOffset() / 2);
+       			message.show(); // display the Toast
+       		} // end catch
+        }
         private Bitmap canvasBitmap;   //Bitmap.createBitmap(getWidth(), getHeight(), Config.ARGB_8888);
         private Bmp tempBitmap = null;
         private Canvas canvas; //= new Canvas(canvasBitmap);
@@ -298,6 +403,7 @@ public class ShakeActivity extends Activity {
         private boolean BeginRotate;
         float rotalC[] = new float[2];
         float rotalP[] = new float[2];
+        private int color = Color.CYAN;
     }
     
     
@@ -315,8 +421,8 @@ public class ShakeActivity extends Activity {
 //      ???
         public Bmp(Bitmap pic, int priority, float preX, float preY) {
         	this(pic, priority);
-            this.preX = preX + pic.getWidth() / 2 * 1.5f;
-            this.preY = preY + pic.getHeight() / 2 * 1.5f;
+            this.preX = preX + pic.getWidth() / 2;
+            this.preY = preY + pic.getHeight() / 2;
         }
         
 //      findPiority : given an array of bmp, return the bmp with right priority

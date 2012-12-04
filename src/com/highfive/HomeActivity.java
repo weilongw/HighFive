@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,7 +26,7 @@ public class HomeActivity extends Activity {
 	
 	private Button launchDoodle;
 	private Button launchShake;
-	
+	private int screenHeight;
 	private String doodleImageUri;
 	
     @Override
@@ -35,6 +36,8 @@ public class HomeActivity extends Activity {
         
         launchDoodle = (Button)findViewById(R.id.LaunchDoodleButton);
         launchShake = (Button)findViewById(R.id.LaunchShakeButton);
+        Display display = getWindowManager().getDefaultDisplay(); 
+        screenHeight = display.getHeight();
         
         launchDoodle.setOnClickListener(new OnClickListener() {
 
@@ -78,6 +81,7 @@ public class HomeActivity extends Activity {
     			if (results != null) {
     				Intent intent = new Intent(HomeActivity.this, ShakeActivity.class);
     				intent.putStringArrayListExtra(HOME_TO_SHAKE, results);
+    				intent.putExtra("SCREEN_HEIGHT", screenHeight);
     				startActivity(intent);
     			}
     		}
@@ -98,7 +102,7 @@ public class HomeActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_home, menu);
+    	super.onCreateOptionsMenu(menu);
         return true;
     }
 }

@@ -242,12 +242,24 @@ public class DoodleView extends View {
 
    		
    		//Bitmap result = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(), false);
-   		Bitmap result = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
+   		Bitmap result = null;
+   		int size = imageBitmap.getHeight() * imageBitmap.getWidth();
+   		if (size > 1500000) {
+   			System.out.println("too bad...");
+   			float scale = imageBitmap.getHeight() / imageBitmap.getWidth();
+   			double el = Math.sqrt(1400000 / scale );
+   			int re_width = (int)el;
+   			int re_height = re_width * (int)scale;
+   			result = Bitmap.createScaledBitmap(imageBitmap, re_width, re_height, false);
+   		}
+   		else {
+   			result = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
+   		}
    		Canvas canvas = new Canvas(result);
    		Bitmap scaled = Bitmap.createScaledBitmap(bitmap, result.getWidth(), result.getHeight(), false);
    		canvas.drawBitmap(scaled, new Matrix(), null);
 
-   		try {
+   		try { 
    			// get an OutputStream to uri
    			OutputStream outStream = 
    					getContext().getContentResolver().openOutputStream(uri);
