@@ -74,7 +74,7 @@ public class ShareActivity extends Activity{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    params.putString("caption", "FbAPIs Sample App photo upload");
+                    params.putString("caption", "HighFive photo upload");
                     Utility.mAsyncRunner.request("me/photos", params, "POST",
                             new DoodleUploadListener(), null);
                 } else {

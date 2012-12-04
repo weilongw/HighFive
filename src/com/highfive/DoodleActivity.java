@@ -116,7 +116,8 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         		return true;
         	case SAVE_MENU_ID :
         		doodleView.saveImage();
-        		showToSharePageDialog();
+        		if (DoodleView.saved_img != null)
+        			showToSharePageDialog();
         		return true;
         }
         return super.onOptionsItemSelected(item);

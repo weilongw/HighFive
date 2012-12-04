@@ -29,7 +29,7 @@ public final class R {
         public static final int LaunchShakeButton=0x7f070004;
         public static final int blurButton=0x7f07000f;
         public static final int btn_select=0x7f070007;
-        public static final int cancelToSharePageButton=0x7f070014;
+        public static final int cancelToSharePageButton=0x7f070013;
         public static final int chronometer=0x7f070000;
         public static final int doodleImageView=0x7f070010;
         public static final int doodleView=0x7f070011;
@@ -45,7 +45,7 @@ public final class R {
         public static final int shareTxt=0x7f07000a;
         public static final int tableLayout=0x7f07000c;
         public static final int textView1=0x7f070002;
-        public static final int toSharePageButton=0x7f070013;
+        public static final int toSharePageButton=0x7f070014;
         public static final int toShareTxt=0x7f070012;
         public static final int widthDialogDoneButton=0x7f070018;
         public static final int widthDialogLinearLayout=0x7f070015;

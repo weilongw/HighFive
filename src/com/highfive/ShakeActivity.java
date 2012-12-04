@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class ShakeActivity extends Activity implements ColorPickerDialog.OnColorChangedListener{
@@ -31,6 +34,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
 	private static final int BACKGROUND_MENU_ID = Menu.FIRST;
 	private static final int SAVE_MENU_ID = Menu.FIRST + 1;
 	private Draw drawView;
+	private Dialog dialog;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,12 +89,45 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         		return true;       	
         	case SAVE_MENU_ID :
         		drawView.saveImage();
+        		if (drawView.saved_img != null)
+        			showToSharePageDialog();
         		return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void showToSharePageDialog(){
+   		dialog = new Dialog(this);
+		dialog.setContentView(R.layout.share_dialog);
+		dialog.setTitle("Share to Facebook");
+		dialog.setCancelable(true);
+   		
+   		Button toSharePageBtn = (Button) dialog.findViewById(R.id.toSharePageButton);
+   		Button cancelBtn = (Button) dialog.findViewById(R.id.cancelToSharePageButton);
+   		
 
+   		toSharePageBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShakeActivity.this, ShareActivity.class);
+                intent.putExtra("com.highfive.share", drawView.saved_img);
+                drawView.saved_img = null;
+                startActivity(intent);
+            }
+
+        });
+   		cancelBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	drawView.saved_img = null;
+            	dialog.dismiss();
+    			dialog = null;
+            }
+        }); 	
+   		
+   		dialog.show();
+
+   	}
     
     class Draw extends View {   
     	Bmp bmp[];
@@ -371,6 +408,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
        			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
        					message.getYOffset() / 2);
        			message.show(); // display the Toast
+       			saved_img = uri;
        		} // end try
        		catch (IOException ex) {
        			// display a message indicating that the image was saved
@@ -405,6 +443,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         float rotalC[] = new float[2];
         float rotalP[] = new float[2];
         private int color = Color.CYAN;
+        private Uri saved_img;
     }
     
     

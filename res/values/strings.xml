@@ -22,8 +22,8 @@
     <string name="blur_button_text">Blur</string>
     <string name="src_button_text">SrcATop</string>
     <string name="button_share_to_fb">Share to Facebook</string>
-    <string name="to_share_page_button">To Share Page</string>
-    <string name="cancel_to_share_page_button">Cancel</string>
+    <string name="to_share_page_button">Yes</string>
+    <string name="cancel_to_share_page_button">No</string>
     <string name="to_share_txt">Do you want to share your image to Facebook?</string>
     <string name="title_activity_share">Share to Facebook</string>
     
