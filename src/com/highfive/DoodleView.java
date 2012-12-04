@@ -36,7 +36,8 @@ public class DoodleView extends View {
     private Paint paintLine; // used to draw lines onto bitmap
     private HashMap<Integer, Path> pathMap; // current Paths being drawn
     private HashMap<Integer, Point> previousPointMap; // current Points
-
+    
+    public static Uri saved_img;
    // DoodleView constructor initializes the DoodleView
     public DoodleView(Context context, AttributeSet attrs) {
     	super(context, attrs); // pass context to View's constructor
@@ -277,6 +278,7 @@ public class DoodleView extends View {
    			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
    					message.getYOffset() / 2);
    			message.show(); // display the Toast
+   			saved_img = uri;
    		} // end try
    		catch (IOException ex) {
    			// display a message indicating that the image was saved

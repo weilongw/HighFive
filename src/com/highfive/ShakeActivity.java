@@ -36,6 +36,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
+        
         shakeImages = intent.getStringArrayListExtra(HomeActivity.HOME_TO_SHAKE);
         int screenHeight = intent.getIntExtra("SCREEN_HEIGHT", 720);
         Bmp[] pic = new Bmp[shakeImages.size()];

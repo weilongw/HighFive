@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/toShareTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:text="@string/to_share_txt"
+        android:textSize="30dp" />
+    
+	<Button android:id="@+id/toSharePageButton" 
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content" 
+	      android:layout_alignParentLeft="true"
+	      android:text="@string/to_share_page_button"/>
+	
+	<Button android:id="@+id/cancelToSharePageButton" 
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content" 
+	      android:layout_alignParentRight="true"
+	      android:text="@string/cancel_to_share_page_button"/>
+
+</RelativeLayout>

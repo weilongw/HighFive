@@ -116,6 +116,7 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         		return true;
         	case SAVE_MENU_ID :
         		doodleView.saveImage();
+        		showToSharePageDialog();
         		return true;
         }
         return super.onOptionsItemSelected(item);
@@ -254,7 +255,38 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
     	
     };
     
-    
+    private void showToSharePageDialog(){
+   		dialog = new Dialog(this);
+		dialog.setContentView(R.layout.share_dialog);
+		dialog.setTitle("Share to Facebook");
+		dialog.setCancelable(true);
+   		
+   		Button toSharePageBtn = (Button) dialog.findViewById(R.id.toSharePageButton);
+   		Button cancelBtn = (Button) dialog.findViewById(R.id.cancelToSharePageButton);
+   		
+
+   		toSharePageBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DoodleActivity.this, ShareActivity.class);
+                intent.putExtra("com.highfive.share", DoodleView.saved_img);
+                DoodleView.saved_img = null;
+                startActivity(intent);
+            }
+
+        });
+   		cancelBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            	DoodleView.saved_img = null;
+            	dialog.dismiss();
+    			dialog = null;
+            }
+        }); 	
+   		
+   		dialog.show();
+
+   	}
 	    
 	    
 }
