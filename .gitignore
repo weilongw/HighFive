@@ -1,1 +1,4 @@
 bin/classes/com/highfive/*.class
+bin/classes.dex
+bin/HighFive.apk
+bin/resources.ap_
