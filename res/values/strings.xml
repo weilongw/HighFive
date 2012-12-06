@@ -26,6 +26,10 @@
     <string name="cancel_to_share_page_button">No</string>
     <string name="to_share_txt">Do you want to share your image to Facebook?</string>
     <string name="title_activity_share">Share to Facebook</string>
+    <string name="camera_dialog_txt">Which photo do you want to doodle on?</string>
+    <string name="gallery_button_txt">From Gallery</string>
+    <string name="camera_button_txt">Take a picture</string>
+    <string name="blank_button_txt">Blank Canvas</string>
     
     
 

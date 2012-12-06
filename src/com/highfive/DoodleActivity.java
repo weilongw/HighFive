@@ -26,7 +26,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class DoodleActivity extends Activity implements ColorPickerDialog.OnColorChangedListener {
 	
-	public static String doodleImageUri;
+	public static Bitmap bitmap;
 	
 	private DoodleView doodleView;
 	private Dialog dialog;
@@ -44,7 +44,7 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        doodleImageUri = intent.getStringExtra(HomeActivity.HOME_TO_DOODLE);
+        String doodleImageUri = intent.getStringExtra(HomeActivity.HOME_TO_DOODLE);
         
         
         setContentView(R.layout.doodle);
@@ -56,7 +56,21 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         //doodleView.setClipToPadding(true);
         
         //doodleView.setPadding(100, 100, 100, 100);
-        Bitmap bitmap = BitmapFactory.decodeFile(doodleImageUri);
+        //Bitmap bitmap = null;
+        if (doodleImageUri == null)
+        	
+        	bitmap = intent.getParcelableExtra("com.highfive.doodle");
+        else if (doodleImageUri.equals("blank")) {
+        	Display display = getWindowManager().getDefaultDisplay(); 
+           
+        	bitmap = Bitmap.createBitmap(display.getWidth(), display.getHeight(), Bitmap.Config.RGB_565);
+        	Canvas canvas = new Canvas(bitmap);
+        	canvas.drawColor(Color.WHITE);
+        	
+        }
+        else 
+        	bitmap = BitmapFactory.decodeFile(doodleImageUri);
+        
         Display display = getWindowManager().getDefaultDisplay(); 
         int screenWidth = display.getWidth();
         

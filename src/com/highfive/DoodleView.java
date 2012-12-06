@@ -70,7 +70,8 @@ public class DoodleView extends View {
     @Override
     public void onSizeChanged(int w, int h, int oldW, int oldH) {
     	
-    	imageBitmap = BitmapFactory.decodeFile(DoodleActivity.doodleImageUri);
+    	//imageBitmap = BitmapFactory.decodeFile(DoodleActivity.doodleImageUri);
+    	imageBitmap = DoodleActivity.bitmap;
     	float scale = (float)imageBitmap.getHeight() / (float)imageBitmap.getWidth();
         float imageHeight = scale * (getWidth());
     	bitmap = Bitmap.createBitmap(getWidth(), (int)imageHeight, 
@@ -250,7 +251,7 @@ public class DoodleView extends View {
    			float scale = imageBitmap.getHeight() / imageBitmap.getWidth();
    			double el = Math.sqrt(1400000 / scale );
    			int re_width = (int)el;
-   			int re_height = re_width * (int)scale;
+   			int re_height = (int)(re_width * scale);
    			result = Bitmap.createScaledBitmap(imageBitmap, re_width, re_height, false);
    		}
    		else {
