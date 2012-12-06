@@ -54,6 +54,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             pic[i] = new Bmp(Bitmap.createScaledBitmap(tmp, width, max_height, false), i, 0,0);
             pic[i].width = pic[i].getPic().getWidth();
             pic[i].height = pic[i].getPic().getHeight();
+            pic[i].degree = (float)Math.toDegrees((double)pic[i].height / (double)pic[i].width);
             System.out.println(pic[i].preX +":" +pic[i].preY +"<==>" + pic[i].width + ":" + pic[i].height);
         }
         setContentView(drawView = new Draw(this, pic));
@@ -252,11 +253,19 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	
             	tempBitmap = pic[0].findByPiority(pic, high);
             	//tempBitmap.matrix.setRotate(rotary);
-            	scale = Math.abs(X_1 - X_2) / tempBitmap.getWidth();
+            	//scale = Math.abs(X_1 - X_2) / tempBitmap.getWidth();
+            	float change = (float)Math.sqrt((X_1-X_2)*(X_1-X_2) + (Y_1-Y_2)*(Y_1-Y_2));
+            	scale = change / dist;
+            	//scale = calculate(X_1, X_2, Y_1, Y_2, tempBitmap.getWidth(), tempBitmap.getHeight());
             	Matrix mat = new Matrix();
             	//tempBitmap.matrix.setScale(scale, scale);
             	mat.setScale(scale, scale);
-            	mat.postRotate((int)Math.toDegrees(rotary));
+            	
+            	double rot = Math.toDegrees(rotary) + tempBitmap.degree;
+            	double radius = Math.sqrt(tempBitmap.getWidth()*tempBitmap.getWidth() +
+            							  tempBitmap.getHeight()*tempBitmap.getHeight()) / 2;
+            	
+            	Log.i("rot", Math.toDegrees(rotary) + "");
             	//if((Math.abs(pic[0].findByPiority(pic, high).getXY(1) - this.X_1) < pic[0].findByPiority(pic, high).getWidth() / 2) 
                   //  && (Math.abs(pic[0].findByPiority(pic, high).getXY(2) - this.Y_1) < pic[0].findByPiority(pic, high).getHeight() / 2)
                     //&&(Math.abs(pic[0].findByPiority(pic, high).getXY(1) - this.X_2) < pic[0].findByPiority(pic, high).getWidth() / 2) 
@@ -264,7 +273,20 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
                                       
             		//tempBitmap.matrix.preTranslate(X + CX - tempBitmap.preX, Y + CY - tempBitmap.preY);
                 	//tempBitmap.matrix.setTranslate(tempBitmap.preX, tempBitmap.preY);
-            	    mat.postTranslate(tempBitmap.preX - tempBitmap.getWidth() / 2, tempBitmap.preY - tempBitmap.getHeight() / 2);
+            	    //mat.postTranslate(tempBitmap.preX - tempBitmap.getWidth() / 2, tempBitmap.preY - tempBitmap.getHeight() / 2);
+            	if (X_1 < X_2 == !x1larger) {
+            		mat.postRotate((int)Math.toDegrees(rotary));
+            		mat.postTranslate(tempBitmap.preX - (float)(radius * scale * Math.cos(Math.toRadians(rot))), 
+      			          tempBitmap.preY - (float)(radius * scale * Math.sin(Math.toRadians(rot))));
+            		
+            	}
+            	else {
+            		mat.postRotate((int)Math.toDegrees(rotary) + 180);
+            		mat.postTranslate(tempBitmap.preX + (float)(radius * scale * Math.cos(Math.toRadians(rot))), 
+            			          tempBitmap.preY + (float)(radius * scale * Math.sin(Math.toRadians(rot))));
+            	}
+            	tempBitmap.rot = rotary;
+            	tempBitmap.scale = scale;
             		//canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
             	    canvas.drawBitmap(tempBitmap.pic, mat, null);
             	    tempBitmap.matrix = new Matrix(mat);
@@ -285,6 +307,8 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	//}
             } 
             
+            
+            
             if(event.getAction() == MotionEvent.ACTION_UP && BeginMove) {
             	CX = 0f;
             	CY = 0f;
@@ -295,8 +319,8 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	BeginRotate = false;
             	if (scale > 0) {
             		tempBitmap = pic[0].findByPiority(pic, pic.length - 1);
-            		tempBitmap.preX = (tempBitmap.preX - tempBitmap.getWidth() / 2) + (tempBitmap.getWidth() * scale / 2);
-            	    tempBitmap.preY = (tempBitmap.preY - tempBitmap.getHeight() / 2) + (tempBitmap.getHeight() * scale / 2);
+            		//tempBitmap.preX = (tempBitmap.preX - tempBitmap.getWidth() / 2) + (tempBitmap.getWidth() * scale / 2);
+            	    //tempBitmap.preY = (tempBitmap.preY - tempBitmap.getHeight() / 2) + (tempBitmap.getHeight() * scale / 2);
             	    //tempBitmap.width *= scale;
             	    //tempBitmap.height *= scale;
             	    /*Toast message = Toast.makeText(getContext(), 
@@ -305,17 +329,27 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	    		message.getYOffset() / 2);
             	    message.show();*/
             	    scale = -1;
+            	    dist = -1f;
             	}
             }
             invalidate();
             return true;
         }
          
+        public float calculate(float x1, float x2, float y1, float y2, float width, float height) {
+        	double dist = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+        	double length1 = width / Math.abs(x1 - x2) * dist;
+        	double length2 = height / Math.abs(y1 - y2) * dist;
+        	
+        	return (float)(dist / Math.min(length1, length2));
+        }
+        
         public void orderMove(MotionEvent event) {
         	Bmp temp = null;
             for(int i = (pic.length - 1); i > -1; i--) {
-            	if((Math.abs(pic[0].findByPiority(pic, i).getXY(1) - event.getX()) < pic[0].findByPiority(pic, i).getWidth() / 2) 
-                   && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - event.getY()) < pic[0].findByPiority(pic, i).getHeight() / 2)) {
+            	//if((Math.abs(pic[0].findByPiority(pic, i).getXY(1) - event.getX()) < pic[0].findByPiority(pic, i).getWidth() / 2) 
+                //   && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - event.getY()) < pic[0].findByPiority(pic, i).getHeight() / 2)) {
+            	if (inRect(event.getX(), event.getY(), pic[0].findByPiority(pic, i))) {
             		temp = pic[0].findByPiority(pic, i);
                     for(Bmp bmp: pic) {
                     	if(bmp.getPriority() > pic[0].findByPiority(pic, i).getPriority())
@@ -335,10 +369,12 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	float y1 = event.getY(0);
         	float y2 = event.getY(1);
         	for (int i = (pic.length - 1); i > -1; i--) {
-        		if((Math.abs(pic[0].findByPiority(pic, i).getXY(1) - x1) < pic[0].findByPiority(pic, i).getWidth() / 2) 
-                    && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - y1) < pic[0].findByPiority(pic, i).getHeight() / 2)
-                    &&(Math.abs(pic[0].findByPiority(pic, i).getXY(1) - x2) < pic[0].findByPiority(pic, i).getWidth() / 2) 
-                    && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - y2) < pic[0].findByPiority(pic, i).getHeight() / 2)) {
+        		//if((Math.abs(pic[0].findByPiority(pic, i).getXY(1) - x1) < pic[0].findByPiority(pic, i).getWidth() / 2) 
+                //    && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - y1) < pic[0].findByPiority(pic, i).getHeight() / 2)
+                //    &&(Math.abs(pic[0].findByPiority(pic, i).getXY(1) - x2) < pic[0].findByPiority(pic, i).getWidth() / 2) 
+                //    && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - y2) < pic[0].findByPiority(pic, i).getHeight() / 2)) {
+        		if (inRect(x1, y1, pic[0].findByPiority(pic, i)) &&
+        				inRect(x2, y2, pic[0].findByPiority(pic, i))) {
         			temp = pic[0].findByPiority(pic, i);
         			for(Bmp bmp: pic) {
                     	if(bmp.getPriority() > temp.getPriority())
@@ -346,9 +382,34 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
                     }
         			temp.setPiority(pic.length - 1);
         			BeginRotate = true;
+        			X_1 = event.getX(0);
+                	X_2 = event.getX(1);
+                	if (X_1 > X_2)
+                		x1larger = true;
+                	else 
+                		x1larger = false;
+                	dist = (float)Math.sqrt((X_1-X_2)*(X_1-X_2) + (Y_1-Y_2)*(Y_1-Y_2));
+                	
         			return;
         		}
         	}
+        }
+        
+        private boolean inRect(float x, float y, Bmp bmp) {
+        	
+        	float tan = (y - bmp.preY) / (x - bmp.preX);
+        	double rotary = Math.atan((double)tan); // in radians
+        	double dist = Math.sqrt((x-bmp.preX)*(x-bmp.preX) + (y-bmp.preY)*(y-bmp.preY));
+        	Log.i("ha", x + "/" + y + "/" + bmp.width + "/" + bmp.height + "/" + bmp.preX+ "/" +bmp.preY+ "/" +bmp.scale+ "/" +bmp.rot+ "/" +rotary+ "/" +dist);
+        	if (Math.abs(dist * Math.sin(rotary - bmp.rot)) > bmp.height / 2 * bmp.scale) {
+        		Log.i("wrong", Math.abs(dist * Math.sin(rotary - bmp.rot)) + ":" +bmp.height / 2 * bmp.scale);
+        		return false;
+        	}
+        		
+        	Log.i("here", "aha");
+        	if (Math.abs(dist * Math.cos(rotary - bmp.rot)) > bmp.width / 2 * bmp.scale)
+        		return false;
+        	return true;
         }
         
         public float[] getT(float preX, float preY, float x, float y, Matrix matrix)
@@ -433,6 +494,8 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         private float X_2;
         private float Y_1;
         private float Y_2;
+        private float dist = 0f;
+        private boolean x1larger = false;
         private float tan;
         private float rotary;
         private float scale = -1;
@@ -509,13 +572,15 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         public float getHeight() {
         	return height;
         }
-        
+        float scale = 1;
+        float rot = 0;
         float preX = 0;
         float preY = 0;
         float width = 0;
         float height = 0;
         Bitmap pic = null;
         int priority = 0;
+        float degree;
         private Matrix matrix = new Matrix();
     }
 }

@@ -3,6 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/backHomeButton"
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="@string/title_activity_home"/>
  	
     <com.highfive.LoginButton
         android:id="@+id/loginFacebookButton"       

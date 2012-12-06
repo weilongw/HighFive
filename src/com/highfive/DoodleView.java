@@ -248,7 +248,7 @@ public class DoodleView extends View {
    		int size = imageBitmap.getHeight() * imageBitmap.getWidth();
    		if (size > 1500000) {
    			System.out.println("too bad...");
-   			float scale = imageBitmap.getHeight() / imageBitmap.getWidth();
+   			float scale = (float)imageBitmap.getHeight() / (float)imageBitmap.getWidth();
    			double el = Math.sqrt(1400000 / scale );
    			int re_width = (int)el;
    			int re_height = (int)(re_width * scale);

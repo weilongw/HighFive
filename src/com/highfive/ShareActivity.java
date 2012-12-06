@@ -51,6 +51,7 @@ public class ShareActivity extends Activity{
 		
 		loginButton = (LoginButton) findViewById(R.id.loginFacebookButton);
 		shareButton = (Button) findViewById(R.id.shareFacebookButton);
+		Button backHomeButton = (Button) findViewById(R.id.backHomeButton);
 		mText = (TextView) findViewById(R.id.shareTxt);
 		mHandler = new Handler();
 		Utility.mFacebook = new Facebook(APP_ID);
@@ -60,6 +61,12 @@ public class ShareActivity extends Activity{
         SessionEvents.addAuthListener(new DoodleAuthListener());
         SessionEvents.addLogoutListener(new DoodleLogoutListener());
 
+        backHomeButton.setOnClickListener(new OnClickListener() {
+        	public void onClick(View v) {
+        		Intent intent = new Intent(ShareActivity.this, HomeActivity.class);
+        		startActivity(intent);
+        	}
+        });
         loginButton.init(this,0,Utility.mFacebook, permissions);
         
         shareButton.setOnClickListener(new OnClickListener() {
