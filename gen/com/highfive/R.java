@@ -32,28 +32,29 @@ public final class R {
         public static final int blurButton=0x7f07000f;
         public static final int btn_select=0x7f070006;
         public static final int cameraButton=0x7f070011;
-        public static final int cancelToSharePageButton=0x7f070016;
-        public static final int doodleImageView=0x7f070013;
-        public static final int doodleView=0x7f070014;
+        public static final int cancelToSharePageButton=0x7f070017;
+        public static final int doodleImageView=0x7f070014;
+        public static final int doodleLayout=0x7f070013;
+        public static final int doodleView=0x7f070015;
         public static final int embossButton=0x7f07000e;
         public static final int galleryButton=0x7f070010;
         public static final int gridview=0x7f070005;
         public static final int imageView_chronometerBackground=0x7f070000;
         public static final int label_images_left=0x7f070004;
         public static final int loginFacebookButton=0x7f070009;
-        public static final int menu_settings=0x7f07001c;
+        public static final int menu_settings=0x7f07001d;
         public static final int pencilButton=0x7f07000d;
         public static final int shakeTextView=0x7f070007;
         public static final int shareFacebookButton=0x7f07000b;
         public static final int shareTxt=0x7f07000a;
         public static final int tableLayout=0x7f07000c;
         public static final int textView1=0x7f070001;
-        public static final int toSharePageButton=0x7f070017;
-        public static final int toShareTxt=0x7f070015;
-        public static final int widthDialogDoneButton=0x7f07001b;
-        public static final int widthDialogLinearLayout=0x7f070018;
-        public static final int widthImageView=0x7f070019;
-        public static final int widthSeekBar=0x7f07001a;
+        public static final int toSharePageButton=0x7f070018;
+        public static final int toShareTxt=0x7f070016;
+        public static final int widthDialogDoneButton=0x7f07001c;
+        public static final int widthDialogLinearLayout=0x7f070019;
+        public static final int widthImageView=0x7f07001a;
+        public static final int widthSeekBar=0x7f07001b;
     }
     public static final class layout {
         public static final int activity_home=0x7f030000;
@@ -87,6 +88,7 @@ public final class R {
         public static final int free_version_label=0x7f04000b;
         public static final int gallery_button_txt=0x7f04001b;
         public static final int hello_world=0x7f040001;
+        public static final int homeButtonTxt=0x7f04001e;
         public static final int menu_settings=0x7f040002;
         public static final int message_error_saving=0x7f04000f;
         public static final int message_saved=0x7f04000e;

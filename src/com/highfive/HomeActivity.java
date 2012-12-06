@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.view.Display;
 import android.view.Menu;
 import android.view.View;
@@ -34,6 +36,7 @@ public class HomeActivity extends Activity {
 	private String doodleImageUri;
 	
 	private Dialog dialog;
+	private Uri uri;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,8 +97,23 @@ public class HomeActivity extends Activity {
    		cameraButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-            	Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE); 
-                startActivityForResult(cameraIntent, CAMERA_REQUEST); 
+            	String fileName = "HighFive" + System.currentTimeMillis();
+
+           		// create a ContentValues and configure new image's data
+           		ContentValues values = new ContentValues();
+           		values.put(Images.Media.TITLE, fileName);
+           		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
+           		values.put(Images.Media.MIME_TYPE, "image/jpg");
+
+           		// get a Uri for the location to save the file
+           		uri = getContentResolver().insert(
+           				Images.Media.EXTERNAL_CONTENT_URI, values);
+            	
+            	//Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+           		Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+           		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+           		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(intent, CAMERA_REQUEST); 
             }
         }); 
    		
@@ -135,11 +153,18 @@ public class HomeActivity extends Activity {
     			}
     		}
     		else if (requestCode == CAMERA_REQUEST) {
-    			Bitmap photo = (Bitmap) data.getExtras().get("data"); 
+    			//Bitmap photo = (Bitmap) data.getExtras().get("data"); 
                 //imageView.setImageBitmap(photo);
-    			Intent intent = new Intent(HomeActivity.this, DoodleActivity.class);
-    			intent.putExtra("com.highfive.doodle", photo);
-    			startActivity(intent);
+    			//Intent intent = new Intent(HomeActivity.this, DoodleActivity.class);
+    			//intent.putExtra("com.highfive.doodle", photo);
+    			//startActivity(intent);
+    			doodleImageUri = getPath(uri);
+    			if (doodleImageUri != null) {
+    				uri = null;
+    				Intent intent = new Intent(HomeActivity.this, DoodleActivity.class);
+    				intent.putExtra(HOME_TO_DOODLE, doodleImageUri);
+    				startActivity(intent);
+    			}
     		}
     	}
     }

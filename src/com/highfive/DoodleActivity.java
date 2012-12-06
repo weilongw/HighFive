@@ -12,12 +12,14 @@ import android.graphics.EmbossMaskFilter;
 import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -28,6 +30,7 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
 	
 	public static Bitmap bitmap;
 	
+	private ImageView doodleImageView;
 	private DoodleView doodleView;
 	private Dialog dialog;
 	private MaskFilter emboss = new EmbossMaskFilter(new float[] {1,1,1}, 0.4f, 6, 3.5f);
@@ -49,7 +52,7 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         
         setContentView(R.layout.doodle);
         doodleView = (DoodleView)findViewById(R.id.doodleView);
-        ImageView doodleImageView = (ImageView)findViewById(R.id.doodleImageView);
+        doodleImageView = (ImageView)findViewById(R.id.doodleImageView);
         
         //doodleView = new DoodleView(this);
         //
@@ -57,34 +60,35 @@ public class DoodleActivity extends Activity implements ColorPickerDialog.OnColo
         
         //doodleView.setPadding(100, 100, 100, 100);
         //Bitmap bitmap = null;
-        if (doodleImageUri == null)
+        Display display = getWindowManager().getDefaultDisplay(); 
+        if (doodleImageUri.equals("blank")) {
         	
-        	bitmap = intent.getParcelableExtra("com.highfive.doodle");
-        else if (doodleImageUri.equals("blank")) {
-        	Display display = getWindowManager().getDefaultDisplay(); 
-           
+            //FrameLayout layout = (FrameLayout)findViewById(R.id.doodleLayout);
+            //Log.i("layout", layout.getWidth() + ":" + layout.getHeight());
         	bitmap = Bitmap.createBitmap(display.getWidth(), display.getHeight(), Bitmap.Config.RGB_565);
         	Canvas canvas = new Canvas(bitmap);
         	canvas.drawColor(Color.WHITE);
         	
         }
-        else 
+        else
         	bitmap = BitmapFactory.decodeFile(doodleImageUri);
         
-        Display display = getWindowManager().getDefaultDisplay(); 
+        
         int screenWidth = display.getWidth();
         
         float scale = (float)bitmap.getHeight() / (float)bitmap.getWidth();
         float imageHeight = scale * screenWidth;
         Bitmap scaled = Bitmap.createScaledBitmap(bitmap, screenWidth, (int)imageHeight, false);
         doodleImageView.setImageBitmap(scaled);
+        
         //textView.setText(doodleImageUri);
         
         
         
         //getActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
+    
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);

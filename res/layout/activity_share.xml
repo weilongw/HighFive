@@ -2,24 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#ffffffff" >
 
     <Button
         android:id="@+id/backHomeButton"
         android:layout_width="95dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="@string/title_activity_home"/>
+        android:layout_gravity="center"
+        android:text="@string/homeButtonTxt"/>
  	
     <com.highfive.LoginButton
         android:id="@+id/loginFacebookButton"       
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:src="@drawable/login_button" />
     
     <TextView android:id="@+id/shareTxt" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
 		/>
     
     
@@ -28,6 +32,7 @@
         
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="@string/button_share_to_fb" />
 
 </LinearLayout>

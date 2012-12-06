@@ -3,8 +3,8 @@
     <string name="app_name">HighFive</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_home">Home</string>
-    <string name="welcome">Welcome to doodle</string>
+    <string name="title_activity_home">HighFive</string>
+    <string name="welcome">Welcome to doodle world!</string>
     <string name="doodle">Doodle</string>
     <string name="shake">Shake</string>
     <string name="title_activity_doodle">Doodle</string>
@@ -30,6 +30,7 @@
     <string name="gallery_button_txt">From Gallery</string>
     <string name="camera_button_txt">Take a picture</string>
     <string name="blank_button_txt">Blank Canvas</string>
+    <string name="homeButtonTxt">Home</string>
     
     
 

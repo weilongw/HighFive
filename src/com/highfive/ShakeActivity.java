@@ -140,7 +140,17 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         
         public Draw(Context context, Bmp[] pic) {
         	super(context);
-        	
+        	String fileName = "HighFive" + System.currentTimeMillis();
+
+       		// create a ContentValues and configure new image's data
+       		ContentValues values = new ContentValues();
+       		values.put(Images.Media.TITLE, fileName);
+       		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
+       		values.put(Images.Media.MIME_TYPE, "image/jpg");
+
+       		// get a Uri for the location to save the file
+       		uri = getContext().getContentResolver().insert(
+       				Images.Media.EXTERNAL_CONTENT_URI, values);
             this.pic = pic;
         }
         
@@ -175,7 +185,6 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         @Override
         public void onDraw(Canvas canvas) {
         	super.onDraw(canvas);
-        
             canvas.drawBitmap(canvasBitmap, 0, 0, null);
         }
         
@@ -440,24 +449,24 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	return re;
         }
         public void saveImage() {
-        	String fileName = "HighFive" + System.currentTimeMillis();
-
-       		// create a ContentValues and configure new image's data
-       		ContentValues values = new ContentValues();
-       		values.put(Images.Media.TITLE, fileName);
-       		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
-       		values.put(Images.Media.MIME_TYPE, "image/jpg");
-
-       		// get a Uri for the location to save the file
-       		Uri uri = getContext().getContentResolver().insert(
-       				Images.Media.EXTERNAL_CONTENT_URI, values);
+        	
        		try { 
        			// get an OutputStream to uri
        			OutputStream outStream = 
        					getContext().getContentResolver().openOutputStream(uri);
 
+       			if (canvasBitmap.getWidth() * canvasBitmap.getHeight() > 1500000) {
+       				float scale = (float)canvasBitmap.getHeight() / (float)canvasBitmap.getWidth();
+       	   			double el = Math.sqrt(1400000 / scale );
+       	   			int re_width = (int)el;
+       	   			int re_height = (int)(re_width * scale);
+       	   			Bitmap save = Bitmap.createScaledBitmap(canvasBitmap, re_width, re_height, false);
+       	   			save.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+       			}
+       			else {
        			// copy the bitmap to the OutputStream
-       			canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+       				canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+       			}
 
        			// flush and close the OutputStream
        			outStream.flush(); // empty the buffer
@@ -507,6 +516,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         float rotalP[] = new float[2];
         private int color = Color.CYAN;
         private Uri saved_img;
+        private Uri uri;
     }
     
     

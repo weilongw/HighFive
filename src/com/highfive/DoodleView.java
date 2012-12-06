@@ -29,6 +29,7 @@ public class DoodleView extends View {
 	// used to determine whether user moved a finger enough to draw again   
 	private static final float TOUCH_TOLERANCE = 10;
 
+	private Uri uri;
 	private Bitmap imageBitmap;
 	private Bitmap bitmap; // drawing area for display or saving
 	private Canvas bitmapCanvas; // used to draw on bitmap
@@ -55,7 +56,17 @@ public class DoodleView extends View {
     	previousPointMap = new HashMap<Integer, Point>();
     	
     	
-    	
+    	String fileName = "HighFive" + System.currentTimeMillis();
+
+   		// create a ContentValues and configure new image's data
+   		ContentValues values = new ContentValues();
+   		values.put(Images.Media.TITLE, fileName);
+   		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
+   		values.put(Images.Media.MIME_TYPE, "image/jpg");
+
+   		// get a Uri for the location to save the file
+   		uri = getContext().getContentResolver().insert(
+   				Images.Media.EXTERNAL_CONTENT_URI, values);
     	
     	
     	//BitmapDrawable backBitmap = new BitmapDrawable(imageBitmap);
@@ -72,8 +83,11 @@ public class DoodleView extends View {
     	
     	//imageBitmap = BitmapFactory.decodeFile(DoodleActivity.doodleImageUri);
     	imageBitmap = DoodleActivity.bitmap;
+    	float imageHeight;
+    	
     	float scale = (float)imageBitmap.getHeight() / (float)imageBitmap.getWidth();
-        float imageHeight = scale * (getWidth());
+    	imageHeight = scale * (getWidth());
+    	
     	bitmap = Bitmap.createBitmap(getWidth(), (int)imageHeight, 
     			Bitmap.Config.ARGB_8888);
     	bitmapCanvas = new Canvas(bitmap);
@@ -230,29 +244,22 @@ public class DoodleView extends View {
    	// save the current image to the Gallery
    	public void saveImage() {
    		// use "Doodlz" followed by current time as the image file name
-   		String fileName = "HighFive" + System.currentTimeMillis();
-
-   		// create a ContentValues and configure new image's data
-   		ContentValues values = new ContentValues();
-   		values.put(Images.Media.TITLE, fileName);
-   		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
-   		values.put(Images.Media.MIME_TYPE, "image/jpg");
-
-   		// get a Uri for the location to save the file
-   		Uri uri = getContext().getContentResolver().insert(
-   				Images.Media.EXTERNAL_CONTENT_URI, values);
+   		
 
    		
    		//Bitmap result = Bitmap.createBitmap(imageBitmap.getWidth(), imageBitmap.getHeight(), false);
    		Bitmap result = null;
+   		
    		int size = imageBitmap.getHeight() * imageBitmap.getWidth();
-   		if (size > 1500000) {
+   		if (size > 1400000) {
    			System.out.println("too bad...");
    			float scale = (float)imageBitmap.getHeight() / (float)imageBitmap.getWidth();
    			double el = Math.sqrt(1400000 / scale );
    			int re_width = (int)el;
    			int re_height = (int)(re_width * scale);
    			result = Bitmap.createScaledBitmap(imageBitmap, re_width, re_height, false);
+   			//result = Bitmap.createScaledBitmap(imageBitmap, imageBitmap.getWidth(), imageBitmap.getHeight(), false);
+   			
    		}
    		else {
    			result = imageBitmap.copy(Bitmap.Config.ARGB_8888, true);
