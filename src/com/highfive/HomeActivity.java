@@ -7,9 +7,6 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -32,7 +29,6 @@ public class HomeActivity extends Activity {
 	private Button launchDoodle;
 	private Button launchShake;
 	private int screenHeight;
-	//private int screenWidth;
 	private String doodleImageUri;
 	
 	private Dialog dialog;
@@ -47,15 +43,10 @@ public class HomeActivity extends Activity {
         launchShake = (Button)findViewById(R.id.LaunchShakeButton);
         Display display = getWindowManager().getDefaultDisplay(); 
         screenHeight = display.getHeight();
-        //screenWidth = display.getWidth();
         launchDoodle.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				//Intent intent = new Intent();
-				//intent.setType("image/*");
-				//intent.setAction(Intent.ACTION_GET_CONTENT);
-				//startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
 				showCameraDialog();
 			}
         });
@@ -99,17 +90,14 @@ public class HomeActivity extends Activity {
             public void onClick(View v) {
             	String fileName = "HighFive" + System.currentTimeMillis();
 
-           		// create a ContentValues and configure new image's data
            		ContentValues values = new ContentValues();
            		values.put(Images.Media.TITLE, fileName);
            		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
            		values.put(Images.Media.MIME_TYPE, "image/jpg");
 
-           		// get a Uri for the location to save the file
            		uri = getContentResolver().insert(
            				Images.Media.EXTERNAL_CONTENT_URI, values);
             	
-            	//Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
            		Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
            		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
            		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -121,7 +109,6 @@ public class HomeActivity extends Activity {
    			@Override
    			public void onClick(View v) {
    				Intent intent = new Intent(HomeActivity.this, DoodleActivity.class);
-   				intent.putExtra(HOME_TO_DOODLE, "blank");
    				startActivity(intent);
    			}
    		});
@@ -136,7 +123,6 @@ public class HomeActivity extends Activity {
     			Uri selectedImageUri = data.getData();
     			doodleImageUri = getPath(selectedImageUri);
     			
-    			//System.out.println(doodleImageUri);
     			if (doodleImageUri != null) {
     				Intent intent = new Intent(HomeActivity.this, DoodleActivity.class);
     				intent.putExtra(HOME_TO_DOODLE, doodleImageUri);
@@ -153,11 +139,6 @@ public class HomeActivity extends Activity {
     			}
     		}
     		else if (requestCode == CAMERA_REQUEST) {
-    			//Bitmap photo = (Bitmap) data.getExtras().get("data"); 
-                //imageView.setImageBitmap(photo);
-    			//Intent intent = new Intent(HomeActivity.this, DoodleActivity.class);
-    			//intent.putExtra("com.highfive.doodle", photo);
-    			//startActivity(intent);
     			doodleImageUri = getPath(uri);
     			if (doodleImageUri != null) {
     				uri = null;

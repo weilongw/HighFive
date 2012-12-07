@@ -1,38 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#ffffffff" >
+    android:background="#ffffffff"
+    android:orientation="vertical" >
 
     <Button
         android:id="@+id/backHomeButton"
         android:layout_width="95dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:layout_gravity="center"
-        android:text="@string/homeButtonTxt"/>
- 	
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/homeButtonTxt" />
+
     <com.highfive.LoginButton
-        android:id="@+id/loginFacebookButton"       
+        android:id="@+id/loginFacebookButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/login_button" />
-    
-    <TextView android:id="@+id/shareTxt" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-		/>
-    
-    
-    <Button 
-        android:id="@+id/shareFacebookButton"
+        android:layout_alignTop="@id/backHomeButton"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
         
+        android:src="@drawable/login_button" />
+
+    <TextView
+        android:id="@+id/shareTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@+id/backHomeButton"
+        android:layout_marginTop="30dp"
+        android:textColor="#ff000000"
+        android:layout_alignLeft="@id/backHomeButton"
+        android:text="@string/share_msg" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/shareTxt"
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@id/backHomeButton"
+        android:text="@string/shareCaption" />
+ 	<EditText
+        android:id="@+id/shareCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/backHomeButton"
+        android:layout_alignRight="@id/loginFacebookButton"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="10dp"
+        android:hint="@string/captionHint"
+        android:textColor="#ff000000"
+        android:ems="10" />
+ 	
+    <Button
+        android:id="@+id/shareFacebookButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shareCaption"
+        android:layout_marginTop="10dp"
+        android:layout_alignLeft="@id/backHomeButton"
         android:text="@string/button_share_to_fb" />
 
-</LinearLayout>
+   
+
+</RelativeLayout>

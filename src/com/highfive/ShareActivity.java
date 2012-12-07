@@ -1,15 +1,20 @@
 package com.highfive;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,19 +29,15 @@ public class ShareActivity extends Activity{
 
 	private LoginButton loginButton;
 	private Button shareButton;
-	
+	private EditText photoCaption;
+	private GPStracker gps;
     private TextView mText;
-	
+	private String imageCaption;
     public static final String APP_ID = "433628393357305";
-    
-//    private Facebook mFacebook;
-//    private AsyncFacebookRunner mAsyncRunner;
     
     String[] permissions = { "offline_access", "publish_stream", "user_photos", "publish_checkins",
     "photo_upload" };
 
-
-	private Handler mHandler;
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -51,9 +52,9 @@ public class ShareActivity extends Activity{
 		
 		loginButton = (LoginButton) findViewById(R.id.loginFacebookButton);
 		shareButton = (Button) findViewById(R.id.shareFacebookButton);
+		photoCaption = (EditText)findViewById(R.id.shareCaption);
 		Button backHomeButton = (Button) findViewById(R.id.backHomeButton);
 		mText = (TextView) findViewById(R.id.shareTxt);
-		mHandler = new Handler();
 		Utility.mFacebook = new Facebook(APP_ID);
 		Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
 		       	
@@ -81,9 +82,12 @@ public class ShareActivity extends Activity{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    params.putString("caption", "HighFive photo upload");
+                    imageCaption = photoCaption.getText().toString();
+                    
+                    params.putString("caption", imageCaption.length() == 0 ? "HighFive photo upload" : imageCaption);
                     Utility.mAsyncRunner.request("me/photos", params, "POST",
                             new DoodleUploadListener(), null);
+                    mText.setText("Please wait...");
                 } else {
                     Toast.makeText(getApplicationContext(),
                             "Error selecting image from the gallery.", Toast.LENGTH_SHORT)
@@ -92,9 +96,73 @@ public class ShareActivity extends Activity{
             }
         });
         
-        shareButton.setVisibility(Utility.mFacebook.isSessionValid() ?
+        
+        gps = new GPStracker(this);
+        if (gps.canGetLocation()) {
+        	
+        	double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                Address obj = addresses.get(0);
+                String add = obj.getAddressLine(0);
+                StringBuffer ret = new StringBuffer();
+                DecimalFormat f = new DecimalFormat("###.000");
+                ret.append("latitude: " + f.format(latitude) + ", longitude: " + f.format(longitude) + "\n");
+                int i = 1;
+                while (add != null) {
+                	ret.append(add + "\n");
+                	add = obj.getAddressLine(i++);
+                }
+                photoCaption.setText(ret);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+        	
+        	gps.showSettingsAlert();
+        }
+        
+        shareButton.setVisibility(Utility.mFacebook.isSessionValid()?
                 View.VISIBLE :
                 View.INVISIBLE);
+       
+        
+        
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		gps = new GPStracker(this);
+        if (gps.canGetLocation()) {
+        	
+        	double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                Address obj = addresses.get(0);
+                String add = obj.getAddressLine(0);
+                StringBuffer ret = new StringBuffer();
+                DecimalFormat f = new DecimalFormat("###.000");
+                ret.append("latitude: " + f.format(latitude) + ", longitude: " + f.format(longitude) + "\n");
+                int i = 1;
+                while (add != null) {
+                	ret.append(add + "\n");
+                	add = obj.getAddressLine(i++);
+                }
+                photoCaption.setText(ret);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        
 	}
 	
 	@Override
@@ -131,26 +199,14 @@ public class ShareActivity extends Activity{
 
         @Override
         public void onComplete(final String response, final Object state) {
-            //dialog.dismiss();
-           /* mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    new UploadPhotoResultDialog(ShareActivity.this, "Upload Photo executed", response)
-                            .show();
-                }
-            });*/
-        	//mText.setText(response);
         	ShareActivity.this.runOnUiThread(new Runnable() {
                 public void run() {
                     mText.setText("Hello there, your photo has been uploaded\n");
                 }
             });
-        	//Toast.makeText(getApplicationContext(), response,
-              //      Toast.LENGTH_LONG).show();
         }
 
         public void onFacebookError(FacebookError error) {
-            //dialog.dismiss();
             Toast.makeText(getApplicationContext(), "Facebook Error: " + error.getMessage(),
                     Toast.LENGTH_LONG).show();
         }

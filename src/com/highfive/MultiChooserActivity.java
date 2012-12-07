@@ -47,8 +47,7 @@ public class MultiChooserActivity extends FragmentActivity implements
 	public static final String COL_WIDTH_KEY = "COL_WIDTH";
 	public static final String FLURRY_EVENT_ADD_MULTIPLE_IMAGES = "Add multiple images";
 
-	// El tamaño por defecto es 100 porque los thumbnails MICRO_KIND son de
-	// 96x96
+	
 	private static final int DEFAULT_COLUMN_WIDTH = 120;
 
 	public static final int NOLIMIT = -1;
@@ -348,24 +347,18 @@ public class MultiChooserActivity extends FragmentActivity implements
 			return;
 		}
 		boolean isChecked = !isChecked(position);
-		// PhotoMix.Log("DAVID", "Posicion " + position + " isChecked: " +
-		// isChecked);
+		
 		if (!unlimitedImages && maxImages == 0 && isChecked) {
-			// PhotoMix.Log("DAVID", "Aquí no debería entrar...");
 			isChecked = false;
 		}
 
 		if (isChecked) {
-			// Solo se resta un slot si hemos introducido un
-			// filename de verdad...
 			if (fileNames.add(name)) {
 				maxImages--;
 				view.setBackgroundColor(Color.RED);
 			}
 		} else {
 			if (fileNames.remove(name)) {
-				// Solo incrementa los slots libres si hemos
-				// "liberado" uno...
 				maxImages++;
 				view.setBackgroundColor(Color.TRANSPARENT);
 			}

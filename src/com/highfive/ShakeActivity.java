@@ -5,9 +5,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,14 +19,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.Images;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.Toast;
 
 public class ShakeActivity extends Activity implements ColorPickerDialog.OnColorChangedListener{
@@ -34,7 +32,6 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
 	private static final int BACKGROUND_MENU_ID = Menu.FIRST;
 	private static final int SAVE_MENU_ID = Menu.FIRST + 1;
 	private Draw drawView;
-	private Dialog dialog;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,8 +64,6 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);
     	
-        //getMenuInflater().inflate(R.menu.activity_doodle, menu);
-    	
     	menu.add(0, BACKGROUND_MENU_ID, 0, "Background");
     	menu.add(0, SAVE_MENU_ID, 0, "Save");	
         return true;
@@ -98,39 +93,52 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
     }
 
     private void showToSharePageDialog(){
-   		dialog = new Dialog(this);
-		dialog.setContentView(R.layout.share_dialog);
-		dialog.setTitle("Share to Facebook");
-		dialog.setCancelable(true);
+    	AlertDialog.Builder builder = new AlertDialog.Builder(ShakeActivity.this);
+    	builder.setMessage(R.string.message_share);
+    	builder.setCancelable(true);
    		
-   		Button toSharePageBtn = (Button) dialog.findViewById(R.id.toSharePageButton);
-   		Button cancelBtn = (Button) dialog.findViewById(R.id.cancelToSharePageButton);
-   		
-
-   		toSharePageBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ShakeActivity.this, ShareActivity.class);
-                intent.putExtra("com.highfive.share", drawView.saved_img);
-                drawView.saved_img = null;
+    	builder.setPositiveButton(R.string.button_share_to_fb, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				Intent intent = new Intent(ShakeActivity.this, ShareActivity.class);
+                intent.putExtra("com.highfive.share", DoodleView.saved_img);
+                DoodleView.saved_img = null;
                 startActivity(intent);
-            }
-
-        });
-   		cancelBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	drawView.saved_img = null;
-            	dialog.dismiss();
-    			dialog = null;
-            }
-        }); 	
-   		
-   		dialog.show();
-
+			} 
+		});
+    	
+    	builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel(); 
+			} 
+		});
+		builder.show(); 
    	}
     
-    class Draw extends View {   
+    class Draw extends View { 
+    	private Bitmap canvasBitmap;
+        private Bmp tempBitmap = null;
+        private Canvas canvas; 
+                private float X = 0f;
+        private float Y = 0f;
+        private Bmp[] pic; 
+        private float X_1;
+        private float X_2;
+        private float Y_1;
+        private float Y_2;
+        private float dist = 0f;
+        private boolean x1larger = false;
+        private float tan;
+        private float rotary;
+        private float scale = -1;
+        private float CX = 0f;
+        private float CY = 0f;
+        private boolean BeginMove;
+        private boolean BeginRotate;
+        float rotalC[] = new float[2];
+        float rotalP[] = new float[2];
+        private int color = Color.CYAN;
+        private Uri saved_img;
+        private Uri uri;
     	Bmp bmp[];
     	
         public Draw(Context context) {
@@ -142,25 +150,23 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	super(context);
         	String fileName = "HighFive" + System.currentTimeMillis();
 
-       		// create a ContentValues and configure new image's data
        		ContentValues values = new ContentValues();
        		values.put(Images.Media.TITLE, fileName);
        		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
        		values.put(Images.Media.MIME_TYPE, "image/jpg");
 
-       		// get a Uri for the location to save the file
        		uri = getContext().getContentResolver().insert(
        				Images.Media.EXTERNAL_CONTENT_URI, values);
             this.pic = pic;
         }
         
         public int getColor() { return color; }
+        
         public void setColor(int color) { 
         	this.color = color;
         	this.canvas.drawColor(color);
         	for(int i = 0; i < pic.length; i++) {
         		tempBitmap = pic[0].findByPiority(pic, i);
-                //tempBitmap.matrix.preTranslate(0f, 0f);
                 canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
         	}
         	invalidate(); 
@@ -175,10 +181,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             for(int i = 0; i < pic.length; i++) {
             	tempBitmap = pic[0].findByPiority(pic, i);
                 tempBitmap.matrix.preTranslate(tempBitmap.getXY(1) - tempBitmap.getWidth() / 2, tempBitmap.getXY(2) - tempBitmap.getHeight() / 2);
-                //tempBitmap.matrix.preScale(2.0f, 1.5f);
-                //tempBitmap.matrix.preTranslate(0f, 0f);
                 this.canvas.drawBitmap(tempBitmap.pic, tempBitmap.matrix, null);
-                //this.canvas.drawBitmap(tempBitmap.pic, new Matrix(), null);
             }
         }
         
@@ -190,20 +193,13 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-        	/*Toast message = Toast.makeText(getContext(), 
-   					"" + event.getAction(), Toast.LENGTH_SHORT);
-   			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
-   					message.getYOffset() / 2);
-   			message.show();*/
         	int high = pic.length - 1;
             if(event.getAction() == MotionEvent.ACTION_DOWN && event.getPointerCount() == 1) {
             	orderMove(event);
-            	//System.out.println(event.getPointerCount());
                 this.X = event.getX();
                 this.Y = event.getY();
                 CX = pic[high].findByPiority(pic, high).getXY(1) - event.getX();
                 CY = pic[high].findByPiority(pic, high).getXY(2) - event.getY();
-                //BeginMove = true;
                 BeginRotate = false;
             }
 
@@ -217,28 +213,14 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
                     canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
                 }
                 tempBitmap = pic[0].findByPiority(pic, high);
-                //rotalP = rotalPoint(new float[]{this.X, this.Y}, tempBitmap.preX, tempBitmap.preY, tempBitmap.width / 2, tempBitmap.height / 2, tempBitmap.matrix);
-                //if((Math.abs(this.X - pic[0].findByPiority(pic, high).getXY(1)) < pic[0].findByPiority(pic, high).getWidth() / 2) 
-                //    && (Math.abs(this.Y - pic[0].findByPiority(pic, high).getXY(2)) < pic[0].findByPiority(pic, high).getHeight() / 2)) {
-                	//tempBitmap.matrix.preTranslate(X + CX - tempBitmap.preX, Y + CY - tempBitmap.preY)
-                	//tempBitmap.matrix.preRotate(30);
                 	rotalC = this.getT(tempBitmap.width / 2, tempBitmap.height / 2 , X + CX, Y + CY, tempBitmap.matrix);                    
-                //	Log.i("matrix", "the matrix");                  
-                	//tempBitmap.matrix.setTranslate(T[0], T[1]);
                 	canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
                 	tempBitmap.preX = X + CX;
                 	tempBitmap.preY = Y + CY;
-                //}
-                //else {  
-                //	tempBitmap.matrix.preTranslate(0f, 0f);
-                //	canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);               
-                //}            
             }
             
             if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2) {
             	orderRotate(event);
-            	//Matrix matrix = null;
-            	//matrix.preScale(1.0f, 1.0f);
             	BeginMove = false;
             }
             
@@ -247,8 +229,6 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	X_2 = event.getX(1);
             	Y_1 = event.getY(0);
             	Y_2 = event.getY(1);
-            	//X_1 = X_2;
-            	//Log.i("2 touch ", String.valueOf(event.getPointerCount()));
             	tan = (Y_2 - Y_1) / (X_2 - X_1);
             	rotary = (float) Math.atan((double)tan);
             	
@@ -261,13 +241,9 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	}
             	
             	tempBitmap = pic[0].findByPiority(pic, high);
-            	//tempBitmap.matrix.setRotate(rotary);
-            	//scale = Math.abs(X_1 - X_2) / tempBitmap.getWidth();
             	float change = (float)Math.sqrt((X_1-X_2)*(X_1-X_2) + (Y_1-Y_2)*(Y_1-Y_2));
             	scale = change / dist;
-            	//scale = calculate(X_1, X_2, Y_1, Y_2, tempBitmap.getWidth(), tempBitmap.getHeight());
             	Matrix mat = new Matrix();
-            	//tempBitmap.matrix.setScale(scale, scale);
             	mat.setScale(scale, scale);
             	
             	double rot = Math.toDegrees(rotary) + tempBitmap.degree;
@@ -275,14 +251,6 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             							  tempBitmap.getHeight()*tempBitmap.getHeight()) / 2;
             	
             	Log.i("rot", Math.toDegrees(rotary) + "");
-            	//if((Math.abs(pic[0].findByPiority(pic, high).getXY(1) - this.X_1) < pic[0].findByPiority(pic, high).getWidth() / 2) 
-                  //  && (Math.abs(pic[0].findByPiority(pic, high).getXY(2) - this.Y_1) < pic[0].findByPiority(pic, high).getHeight() / 2)
-                    //&&(Math.abs(pic[0].findByPiority(pic, high).getXY(1) - this.X_2) < pic[0].findByPiority(pic, high).getWidth() / 2) 
-                    //&& (Math.abs(pic[0].findByPiority(pic, high).getXY(2) - this.Y_2) < pic[0].findByPiority(pic, high).getHeight() / 2)) {
-                                      
-            		//tempBitmap.matrix.preTranslate(X + CX - tempBitmap.preX, Y + CY - tempBitmap.preY);
-                	//tempBitmap.matrix.setTranslate(tempBitmap.preX, tempBitmap.preY);
-            	    //mat.postTranslate(tempBitmap.preX - tempBitmap.getWidth() / 2, tempBitmap.preY - tempBitmap.getHeight() / 2);
             	if (X_1 < X_2 == !x1larger) {
             		mat.postRotate((int)Math.toDegrees(rotary));
             		mat.postTranslate(tempBitmap.preX - (float)(radius * scale * Math.cos(Math.toRadians(rot))), 
@@ -296,24 +264,8 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	}
             	tempBitmap.rot = rotary;
             	tempBitmap.scale = scale;
-            		//canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
-            	    canvas.drawBitmap(tempBitmap.pic, mat, null);
-            	    tempBitmap.matrix = new Matrix(mat);
-            	    //tempBitmap.preX = (tempBitmap.preX - tempBitmap.getWidth() / 2) + (tempBitmap.getWidth() * scale / 2);
-            	    //tempBitmap.preY = (tempBitmap.preY - tempBitmap.getHeight() / 2) + (tempBitmap.getHeight() * scale / 2);
-            	    
-            		//tempBitmap.preX = X + CX;
-                    
-            		//tempBitmap.preY = Y + CY;
-                    
-            	//}
-                
-            	//else {
-                     
-            		//tempBitmap.matrix.preTranslate(0f, 0f);
-                    
-            		//canvas.drawBitmap(tempBitmap.getPic(), tempBitmap.matrix, null);
-            	//}
+            	canvas.drawBitmap(tempBitmap.pic, mat, null);
+            	tempBitmap.matrix = new Matrix(mat);
             } 
             
             
@@ -322,21 +274,11 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             	CX = 0f;
             	CY = 0f;
             	BeginMove = false;
-            	//BeginRotate = false;
             }
             if ((event.getAction() == MotionEvent.ACTION_POINTER_UP || event.getAction() == MotionEvent.ACTION_UP ) && BeginRotate) {
             	BeginRotate = false;
             	if (scale > 0) {
             		tempBitmap = pic[0].findByPiority(pic, pic.length - 1);
-            		//tempBitmap.preX = (tempBitmap.preX - tempBitmap.getWidth() / 2) + (tempBitmap.getWidth() * scale / 2);
-            	    //tempBitmap.preY = (tempBitmap.preY - tempBitmap.getHeight() / 2) + (tempBitmap.getHeight() * scale / 2);
-            	    //tempBitmap.width *= scale;
-            	    //tempBitmap.height *= scale;
-            	    /*Toast message = Toast.makeText(getContext(), 
-   					"" + rotary, Toast.LENGTH_SHORT);
-            	    message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
-            	    		message.getYOffset() / 2);
-            	    message.show();*/
             	    scale = -1;
             	    dist = -1f;
             	}
@@ -356,15 +298,13 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         public void orderMove(MotionEvent event) {
         	Bmp temp = null;
             for(int i = (pic.length - 1); i > -1; i--) {
-            	//if((Math.abs(pic[0].findByPiority(pic, i).getXY(1) - event.getX()) < pic[0].findByPiority(pic, i).getWidth() / 2) 
-                //   && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - event.getY()) < pic[0].findByPiority(pic, i).getHeight() / 2)) {
             	if (inRect(event.getX(), event.getY(), pic[0].findByPiority(pic, i))) {
             		temp = pic[0].findByPiority(pic, i);
                     for(Bmp bmp: pic) {
                     	if(bmp.getPriority() > pic[0].findByPiority(pic, i).getPriority())
                     		bmp.priority--;
                     }
-                    temp.setPiority(pic.length - 1);
+                    temp.setPriority(pic.length - 1);
                     BeginMove = true;
                     return;
                 }
@@ -378,10 +318,6 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	float y1 = event.getY(0);
         	float y2 = event.getY(1);
         	for (int i = (pic.length - 1); i > -1; i--) {
-        		//if((Math.abs(pic[0].findByPiority(pic, i).getXY(1) - x1) < pic[0].findByPiority(pic, i).getWidth() / 2) 
-                //    && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - y1) < pic[0].findByPiority(pic, i).getHeight() / 2)
-                //    &&(Math.abs(pic[0].findByPiority(pic, i).getXY(1) - x2) < pic[0].findByPiority(pic, i).getWidth() / 2) 
-                //    && (Math.abs(pic[0].findByPiority(pic, i).getXY(2) - y2) < pic[0].findByPiority(pic, i).getHeight() / 2)) {
         		if (inRect(x1, y1, pic[0].findByPiority(pic, i)) &&
         				inRect(x2, y2, pic[0].findByPiority(pic, i))) {
         			temp = pic[0].findByPiority(pic, i);
@@ -389,7 +325,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
                     	if(bmp.getPriority() > temp.getPriority())
                     		bmp.priority--;
                     }
-        			temp.setPiority(pic.length - 1);
+        			temp.setPriority(pic.length - 1);
         			BeginRotate = true;
         			X_1 = event.getX(0);
                 	X_2 = event.getX(1);
@@ -409,20 +345,16 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	float tan = (y - bmp.preY) / (x - bmp.preX);
         	double rotary = Math.atan((double)tan); // in radians
         	double dist = Math.sqrt((x-bmp.preX)*(x-bmp.preX) + (y-bmp.preY)*(y-bmp.preY));
-        	Log.i("ha", x + "/" + y + "/" + bmp.width + "/" + bmp.height + "/" + bmp.preX+ "/" +bmp.preY+ "/" +bmp.scale+ "/" +bmp.rot+ "/" +rotary+ "/" +dist);
         	if (Math.abs(dist * Math.sin(rotary - bmp.rot)) > bmp.height / 2 * bmp.scale) {
-        		Log.i("wrong", Math.abs(dist * Math.sin(rotary - bmp.rot)) + ":" +bmp.height / 2 * bmp.scale);
         		return false;
         	}
         		
-        	Log.i("here", "aha");
         	if (Math.abs(dist * Math.cos(rotary - bmp.rot)) > bmp.width / 2 * bmp.scale)
         		return false;
         	return true;
         }
         
-        public float[] getT(float preX, float preY, float x, float y, Matrix matrix)
-        {
+        public float[] getT(float preX, float preY, float x, float y, Matrix matrix) {
                 float[] re = new float[2];
                 float[] matrixArray = new float[9];
                 matrix.getValues(matrixArray);
@@ -448,10 +380,10 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	re[1] = - a * matrixArray[3] + b * matrixArray[4] + Y;
         	return re;
         }
+        
         public void saveImage() {
         	
        		try { 
-       			// get an OutputStream to uri
        			OutputStream outStream = 
        					getContext().getContentResolver().openOutputStream(uri);
 
@@ -464,81 +396,49 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
        	   			save.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
        			}
        			else {
-       			// copy the bitmap to the OutputStream
        				canvasBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
        			}
 
-       			// flush and close the OutputStream
        			outStream.flush(); // empty the buffer
        			outStream.close(); // close the stream
 
-       			// display a message indicating that the image was saved
-       			Toast message = Toast.makeText(getContext(), 
-       					R.string.message_saved, Toast.LENGTH_SHORT);
-       			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
-       					message.getYOffset() / 2);
-       			message.show(); // display the Toast
        			saved_img = uri;
-       		} // end try
+       		} 
        		catch (IOException ex) {
        			// display a message indicating that the image was saved
        			Toast message = Toast.makeText(getContext(), 
        					R.string.message_error_saving, Toast.LENGTH_SHORT);
        			message.setGravity(Gravity.CENTER, message.getXOffset() / 2, 
        					message.getYOffset() / 2);
-       			message.show(); // display the Toast
-       		} // end catch
+       			message.show();
+       		} 
         }
-        private Bitmap canvasBitmap;   //Bitmap.createBitmap(getWidth(), getHeight(), Config.ARGB_8888);
-        private Bmp tempBitmap = null;
-        private Canvas canvas; //= new Canvas(canvasBitmap);
-                private float X = 0f;
-        private float Y = 0f;
-                @SuppressWarnings("unused")
-                private float DownX = 0f;
-        @SuppressWarnings("unused")
-                private float DownY = 0f;
-        private Bmp[] pic; //= new Bmp[4];
-        private float X_1;
-        private float X_2;
-        private float Y_1;
-        private float Y_2;
-        private float dist = 0f;
-        private boolean x1larger = false;
-        private float tan;
-        private float rotary;
-        private float scale = -1;
-        private float CX = 0f;
-        private float CY = 0f;
-        private boolean BeginMove;
-        private boolean BeginRotate;
-        float rotalC[] = new float[2];
-        float rotalP[] = new float[2];
-        private int color = Color.CYAN;
-        private Uri saved_img;
-        private Uri uri;
+        
     }
     
-    
-    
-    
-//    @param pic:the Bitmap to draw
-//    @param piority: the order to draw picture
-//    @param preX,preY: the X and Y 
     class Bmp {
-//      ???
+    	
+    	float scale = 1;
+        float rot = 0;
+        float preX = 0;
+        float preY = 0;
+        float width = 0;
+        float height = 0;
+        Bitmap pic = null;
+        int priority = 0;
+        float degree;
+        private Matrix matrix = new Matrix();
+    	
         public Bmp(Bitmap pic, int piority) {
         	this.pic = pic;
             this.priority = piority;
         }
-//      ???
         public Bmp(Bitmap pic, int priority, float preX, float preY) {
         	this(pic, priority);
             this.preX = preX + pic.getWidth() / 2;
             this.preY = preY + pic.getHeight() / 2;
         }
         
-//      findPiority : given an array of bmp, return the bmp with right priority
         public Bmp findByPiority(Bmp[] pic, int priority) {
         	for(Bmp p : pic) {
         		if(p.priority == priority) 
@@ -547,17 +447,14 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         	return null;
         }
         
-//      set Priority
-        public void setPiority(int priority) {
+        public void setPriority(int priority) {
         	this.priority = priority;
         }
         
-//      return Priority
         public int getPriority() {
         	return this.priority;
         }
         
-//      return X and Y
         public float getXY(int i) {
         	if(i == 1) {
         		return this.preX;
@@ -568,29 +465,17 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
             return (Float) null;
         }
 
-//      getPicture
         public Bitmap getPic() {
         	return this.pic;
         }
         
-//      getWidth
         public float getWidth() {
         	return width;
         }
         
-//      getHeight
         public float getHeight() {
         	return height;
         }
-        float scale = 1;
-        float rot = 0;
-        float preX = 0;
-        float preY = 0;
-        float width = 0;
-        float height = 0;
-        Bitmap pic = null;
-        int priority = 0;
-        float degree;
-        private Matrix matrix = new Matrix();
+        
     }
 }

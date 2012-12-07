@@ -31,6 +31,13 @@
     <string name="camera_button_txt">Take a picture</string>
     <string name="blank_button_txt">Blank Canvas</string>
     <string name="homeButtonTxt">Home</string>
+    <string name="message_erase">Do you want to clear the canvas?</string>
+    <string name="button_erase">Erase</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="message_share">Your image has been saved to gallery. Do you want to share it to Facebook?</string>
+    <string name="share_msg">Share this moment with your friend</string>
+    <string name="shareCaption">Image caption :</string>
+    <string name="captionHint">Title your photo here</string>
     
     
 
