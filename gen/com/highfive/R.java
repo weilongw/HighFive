@@ -25,8 +25,8 @@ public final class R {
         public static final int you=0x7f02000b;
     }
     public static final class id {
-        public static final int LaunchDoodleButton=0x7f070002;
-        public static final int LaunchShakeButton=0x7f070003;
+        public static final int LaunchDoodleButton=0x7f070001;
+        public static final int LaunchShakeButton=0x7f070002;
         public static final int backHomeButton=0x7f070008;
         public static final int blankButton=0x7f070013;
         public static final int blurButton=0x7f070010;
@@ -39,7 +39,7 @@ public final class R {
         public static final int embossButton=0x7f07000f;
         public static final int galleryButton=0x7f070011;
         public static final int gridview=0x7f070005;
-        public static final int imageView_chronometerBackground=0x7f070000;
+        public static final int imageView_chronometerBackground=0x7f070003;
         public static final int label_images_left=0x7f070004;
         public static final int loginFacebookButton=0x7f070009;
         public static final int menu_settings=0x7f07001e;
@@ -49,7 +49,7 @@ public final class R {
         public static final int shareFacebookButton=0x7f07000c;
         public static final int shareTxt=0x7f07000a;
         public static final int tableLayout=0x7f07000d;
-        public static final int textView1=0x7f070001;
+        public static final int textView1=0x7f070000;
         public static final int toSharePageButton=0x7f070019;
         public static final int toShareTxt=0x7f070017;
         public static final int widthDialogDoneButton=0x7f07001d;

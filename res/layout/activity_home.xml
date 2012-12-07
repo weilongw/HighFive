@@ -4,34 +4,26 @@
     android:layout_height="match_parent"
     android:background="#ffffffff" >
 
-    <ImageView
-        android:id="@+id/imageView_chronometerBackground"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="44dp"
-        
-        android:src="@drawable/paint_brush" />
-
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/imageView_chronometerBackground"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
         android:gravity="center"
         android:text="@string/welcome"
         android:textSize="30dp" />
+    
 
     <Button
         android:id="@+id/LaunchDoodleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textView1"
+        android:layout_marginTop="30dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/imageView_chronometerBackground"
-        android:layout_marginLeft="63dp"
+        android:layout_marginLeft="30dp"
         android:text="@string/doodle" />
 
     <Button
@@ -39,8 +31,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/imageView_chronometerBackground"
-        android:layout_marginRight="59dp"
+        android:layout_marginRight="30dp"
+        android:layout_below="@id/textView1"
+        android:layout_marginTop="30dp"
         android:text="@string/shake" />
+    
+    <ImageView
+        android:id="@+id/imageView_chronometerBackground"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textView1"
+        android:layout_marginTop="80dp"
+        android:layout_gravity="center"
+        android:src="@drawable/paint_brush" />
 
 </RelativeLayout>
