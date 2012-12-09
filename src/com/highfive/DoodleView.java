@@ -54,15 +54,7 @@ public class DoodleView extends View {
     	previousPointMap = new HashMap<Integer, Point>();
     	
     	
-    	String fileName = "HighFive" + System.currentTimeMillis();
-
-   		ContentValues values = new ContentValues();
-   		values.put(Images.Media.TITLE, fileName);
-   		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
-   		values.put(Images.Media.MIME_TYPE, "image/jpg");
-
-   		uri = getContext().getContentResolver().insert(
-   				Images.Media.EXTERNAL_CONTENT_URI, values);
+    	
     	
     	
     } 
@@ -213,13 +205,21 @@ public class DoodleView extends View {
    	// save the current image to the Gallery
    	public void saveImage() {
    		Bitmap result = null;
-   		
+   		String fileName = "HighFive" + System.currentTimeMillis();
+
+   		ContentValues values = new ContentValues();
+   		values.put(Images.Media.TITLE, fileName);
+   		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
+   		values.put(Images.Media.MIME_TYPE, "image/jpg");
+
+   		uri = getContext().getContentResolver().insert(
+   				Images.Media.EXTERNAL_CONTENT_URI, values);
    		int size = imageBitmap.getHeight() * imageBitmap.getWidth();
-   		//rescale the image if it is larger than 8MB
-   		if (size > 1400000) {
-   			System.out.println("too bad...");
+   		//rescale the image if it is larger than 4MB
+   		if (size > 1000000) {
+   			
    			float scale = (float)imageBitmap.getHeight() / (float)imageBitmap.getWidth();
-   			double el = Math.sqrt(1400000 / scale );
+   			double el = Math.sqrt(1000000 / scale );
    			int re_width = (int)el;
    			int re_height = (int)(re_width * scale);
    			result = Bitmap.createScaledBitmap(imageBitmap, re_width, re_height, false);   			
@@ -242,7 +242,7 @@ public class DoodleView extends View {
 
    			saved_img = uri;
    		} 
-   		catch (IOException ex) {
+   		catch (Exception ex) {
    			// display a message indicating that the image was saved
    			Toast message = Toast.makeText(getContext(), 
    					R.string.message_error_saving, Toast.LENGTH_SHORT);

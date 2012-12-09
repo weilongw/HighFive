@@ -100,8 +100,8 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
     	builder.setPositiveButton(R.string.button_share_to_fb, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				Intent intent = new Intent(ShakeActivity.this, ShareActivity.class);
-                intent.putExtra("com.highfive.share", DoodleView.saved_img);
-                DoodleView.saved_img = null;
+                intent.putExtra("com.highfive.share", drawView.saved_img);
+                drawView.saved_img = null;
                 startActivity(intent);
 			} 
 		});
@@ -148,15 +148,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         
         public Draw(Context context, Bmp[] pic) {
         	super(context);
-        	String fileName = "HighFive" + System.currentTimeMillis();
-
-       		ContentValues values = new ContentValues();
-       		values.put(Images.Media.TITLE, fileName);
-       		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
-       		values.put(Images.Media.MIME_TYPE, "image/jpg");
-
-       		uri = getContext().getContentResolver().insert(
-       				Images.Media.EXTERNAL_CONTENT_URI, values);
+        	
             this.pic = pic;
         }
         
@@ -382,12 +374,20 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
         }
         
         public void saveImage() {
-        	
+        	String fileName = "HighFive" + System.currentTimeMillis();
+
+       		ContentValues values = new ContentValues();
+       		values.put(Images.Media.TITLE, fileName);
+       		values.put(Images.Media.DATE_ADDED, System.currentTimeMillis());
+       		values.put(Images.Media.MIME_TYPE, "image/jpg");
+
+       		uri = getContext().getContentResolver().insert(
+       				Images.Media.EXTERNAL_CONTENT_URI, values);
        		try { 
        			OutputStream outStream = 
        					getContext().getContentResolver().openOutputStream(uri);
 
-       			if (canvasBitmap.getWidth() * canvasBitmap.getHeight() > 1500000) {
+       			if (canvasBitmap.getWidth() * canvasBitmap.getHeight() > 1400000) {
        				float scale = (float)canvasBitmap.getHeight() / (float)canvasBitmap.getWidth();
        	   			double el = Math.sqrt(1400000 / scale );
        	   			int re_width = (int)el;
@@ -404,7 +404,7 @@ public class ShakeActivity extends Activity implements ColorPickerDialog.OnColor
 
        			saved_img = uri;
        		} 
-       		catch (IOException ex) {
+       		catch (Exception ex) {
        			// display a message indicating that the image was saved
        			Toast message = Toast.makeText(getContext(), 
        					R.string.message_error_saving, Toast.LENGTH_SHORT);
